@@ -189,7 +189,7 @@ class Lamber:
 
         if not (
             self.config.getoption("lamber_ignore_fixture_step")
-            or getattr(fixturedef, "_is_step", False)
+            or hasattr(fixturedef, "_lamber_wrapped")
         ):
             self.test_session.current_test_case.sourcecodes.add(
                 getsource(fixturedef.func)
@@ -197,7 +197,8 @@ class Lamber:
             fixturedef.func = step(fixturedef.argname, scope=fixturedef.scope)(
                 fixturedef.func
             )
-            fixturedef._is_step = True
+
+            setattr(fixturedef, "_lamber_wrapped", True)
 
     @hookimpl(hookwrapper=True)
     def pytest_runtest_teardown(self) -> Generator[None, None, None]:
