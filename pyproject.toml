@@ -1,0 +1,27 @@
+[project]
+name = "lamber"
+dynamic = ["version"]
+description = "An easy-to-use testing framework based on pytest"
+readme = "README.md"
+authors = [{ name = "luizyao", email = "luizyao@163.com" }]
+requires-python = ">=3.10"
+dependencies = [
+    "pytest>=8.3.5",
+]
+
+[project.entry-points.pytest11]
+lamber = "lamber.main"
+
+[tool.uv]
+index-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/lamber"]
+
+[tool.hatch.version]
+path = "src/lamber/__init__.py"
