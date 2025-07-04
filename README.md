@@ -53,9 +53,9 @@ def test_answer():
  * 其中 pytest fixture 的调用关系会在 Step Tree 中展示。可以通过 `--lamber-ignore-fixture-step` 选项关闭此功能。
 
  # 对原生 pytest 脚本的改造
- Lamber 引入 Step 的概念，将测试执行的过程进一步细分，支持装饰器和上下文管理器两种方式声明 Step。
+ Lamber 引入 Step 的概念，将测试执行的过程进一步细分，支持**上下文管理器**（`with lamber.Step:`）和**装饰器**（`@lamber.step`）两种方式声明步骤。
 
- 对上述脚本改造后，如下：
+ 改造上述脚本：
 
  ```python
  import pytest
