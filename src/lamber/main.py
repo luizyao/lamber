@@ -125,7 +125,7 @@ class Lamber:
                 if dist.project_name != "lamber"
             }
             if plugins:
-                environment.update({"plugins": ", ".join(plugins)})
+                environment.update({"_plugins": ", ".join(plugins)})
 
         return environment
 
