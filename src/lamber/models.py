@@ -342,6 +342,30 @@ def step(
     return _decorator
 
 
+class AttachmentType(Enum):
+    TEXT = ("text/plain", "txt")
+    HTML = ("text/html", "html")
+    PNG = ("image/png", "png")
+    JPEG = ("image/jpeg", "jpeg")
+    URI = ("text/uri-list", "uri")
+    CSV = ("text/csv", "csv")
+    XML = ("text/xml", "xml")
+    ZIP = ("application/zip", "zip")
+
+    def __init__(self, mime_type: str, extension: str) -> None:
+        self.mime_type = mime_type
+        self.extension = extension
+
+
+class Attachment:
+    def __init__(self, name: str, type: AttachmentType, value: any):
+        self.id = uuid4()
+        self.name = name
+        self.content_type = type
+        self.content_value = value
+        self.create_time = datetime.now()
+
+
 class TestCase(TestStep):
     def __init__(self, item: Item):
         super().__init__(item.name)
@@ -352,6 +376,7 @@ class TestCase(TestStep):
         self.caplog: Optional[str] = None
         self.capstderr: Optional[str] = None
         self.capstdout: Optional[str] = None
+        self.attachments: Dict[str, Attachment] = {}
 
     def _compute_marker(self, item: Item) -> List[dict]:
         return [
@@ -396,6 +421,11 @@ class TestCase(TestStep):
     @property
     def sourcecode(self) -> str:
         return "\n\n".join(self.sourcecodes)
+
+    def attach(
+        self, name: str, value: any, *, type: AttachmentType = AttachmentType.TEXT
+    ):
+        self.attachments[name] = Attachment(name, type, value)
 
 
 class SingletonMetaClass(type):

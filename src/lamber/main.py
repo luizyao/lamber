@@ -258,3 +258,9 @@ class Lamber:
                 capstderr=self.test_session.current_test_case.capstderr,
                 capstdout=self.test_session.current_test_case.capstdout,
             )
+
+            self.config.hook.pytest_lamber_log_test_case_result(
+                test_case=self.test_session.current_test_case,
+                result=self.test_session.current_test_case.result,
+                result_detail=self.test_session.current_test_case.result_detail,
+            )

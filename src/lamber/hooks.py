@@ -67,3 +67,10 @@ def pytest_lamber_log_test_case_logs(
     capstderr: str,
     capstdout: str,
 ) -> None: ...
+
+
+def pytest_lamber_log_test_case_result(
+    test_case: TestCase,
+    result: TestExecutionResult,
+    result_detail: Optional[TestExecutionResultDetail],
+) -> None: ...
