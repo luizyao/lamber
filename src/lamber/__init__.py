@@ -1,6 +1,11 @@
+from lamber.models import Attachment, AttachmentType, step
 from lamber.models import TestStep as Step
-from lamber.models import step
 
-__all__ = (Step, step)
+__all__ = (
+    Attachment,
+    AttachmentType,
+    step,
+    Step,
+)
 
 __version__ = "0.1.0"

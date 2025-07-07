@@ -72,4 +72,15 @@ CREATE TABLE
         FOREIGN KEY (parent_uuid) REFERENCES lamber_teststep (uuid) ON DELETE CASCADE ON UPDATE CASCADE
     );
 
+CREATE TABLE
+    IF NOT EXISTS lamber_attachment (
+        uuid VARCHAR(32) PRIMARY KEY,
+        name VARCHAR(128),
+        content_type VARCHAR(32),
+        content_value,
+        create_time REAL DEFAULT (unixepoch ('subsec')),
+        testcase_uuid VARCHAR(32),
+        FOREIGN KEY (testcase_uuid) REFERENCES lamber_testcase (uuid) ON DELETE CASCADE ON UPDATE CASCADE
+    );
+
 COMMIT;

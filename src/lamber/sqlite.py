@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from lamber.models import TestCase, TestStep
+from lamber.models import AttachmentType, TestCase, TestStep
 
 if TYPE_CHECKING:
     from typing import Dict, List, Optional, Union
@@ -270,6 +270,43 @@ class SqlitePlugin:
                 True,
             )
         )
+
+        if test_case.attachments:
+            self.queue.put(
+                (
+                    "executemany",
+                    """
+                    INSERT INTO
+                        lamber_attachment (
+                            uuid,
+                            name,
+                            content_type,
+                            content_value,
+                            create_time,
+                            testcase_uuid
+                        )
+                    VALUES
+                        (?, ?, json (?), ?, ?, ?);
+                    """,
+                    [
+                        (
+                            attachment.id.hex,
+                            attachment.name,
+                            json.dumps(
+                                attachment.content_type,
+                                default=lambda obj: isinstance(obj, AttachmentType)
+                                and (obj.mime_type, obj.extension)
+                                or obj,
+                            ),
+                            attachment.content_value,
+                            attachment.create_time,
+                            test_case.id_hex,
+                        )
+                        for attachment in test_case.attachments.values()
+                    ],
+                    True,
+                )
+            )
 
     def pytest_lamber_log_test_step_start(
         self, test_step: TestStep, parent: Union[TestCase, TestStep]
