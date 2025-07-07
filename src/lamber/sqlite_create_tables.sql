@@ -68,7 +68,8 @@ CREATE TABLE
         testcase_uuid VARCHAR(32),
         parent_uuid VARCHAR(32),
         duration REAL GENERATED ALWAYS AS (stop_time - start_time) VIRTUAL,
-        FOREIGN KEY (testcase_uuid) REFERENCES lamber_testcase (uuid) ON DELETE CASCADE ON UPDATE CASCADE
+        FOREIGN KEY (testcase_uuid) REFERENCES lamber_testcase (uuid) ON DELETE CASCADE ON UPDATE CASCADE,
+        FOREIGN KEY (parent_uuid) REFERENCES lamber_teststep (uuid) ON DELETE CASCADE ON UPDATE CASCADE
     );
 
 CREATE TABLE
