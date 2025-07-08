@@ -200,6 +200,8 @@ class Lamber:
 
             setattr(fixturedef, "_lamber_wrapped", True)
 
+        setattr(request.node, "_lamber_test_case", self.test_session.current_test_case)
+
     @hookimpl(hookwrapper=True)
     def pytest_runtest_teardown(self) -> Generator[None, None, None]:
         self.test_session.current_test_exec = self.test_session.current_test_case

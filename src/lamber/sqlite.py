@@ -245,6 +245,7 @@ class SqlitePlugin:
                 )
             )
 
+    @pytest.hookimpl(trylast=True)
     def pytest_lamber_log_test_case_stop(
         self,
         test_case: TestCase,

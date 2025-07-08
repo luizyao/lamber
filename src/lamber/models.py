@@ -319,9 +319,9 @@ def step(
                 generator = _func(*args, **kwargs)
 
                 with TestStep(title, when=when, scope=scope):
-                    next(generator)
+                    result = next(generator)
 
-                yield
+                yield result
 
                 with TestStep(title, when=when, scope=scope):
                     try:
@@ -350,7 +350,6 @@ class AttachmentType(Enum):
     URI = ("text/uri-list", "uri")
     CSV = ("text/csv", "csv")
     XML = ("text/xml", "xml")
-    ZIP = ("application/zip", "zip")
 
     def __init__(self, mime_type: str, extension: str) -> None:
         self.mime_type = mime_type
@@ -422,9 +421,7 @@ class TestCase(TestStep):
     def sourcecode(self) -> str:
         return "\n\n".join(self.sourcecodes)
 
-    def attach(
-        self, name: str, value: any, *, type: AttachmentType = AttachmentType.TEXT
-    ):
+    def attach(self, name: str, value: any, type: AttachmentType = AttachmentType.TEXT):
         self.attachments[name] = Attachment(name, type, value)
 
 
