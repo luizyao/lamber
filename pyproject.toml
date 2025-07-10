@@ -1,7 +1,7 @@
 [project]
 name = "lamber"
 dynamic = ["version"]
-description = "An easy-to-use testing framework based on pytest"
+description = "Collect pytest execution data, provide consumption interfaces."
 readme = "README.md"
 authors = [{ name = "luizyao", email = "luizyao@163.com" }]
 requires-python = ">=3.10"

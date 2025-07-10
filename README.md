@@ -1,23 +1,23 @@
 # Lamber
-Lamber 收集 [pytest](https://github.com/pytest-dev/pytest) 执行数据（[models](./src/lamber/models.py)），提供消费接口（[hooks](./src/lamber/hooks.py)），并允许用户集成自定义数据。
+Lamber collects [pytest](https://github.com/pytest-dev/pytest) execution data([models](./src/lamber/models.py)), provides consumption interfaces([hooks](./src/lamber/hooks.py)), and allows users to integrate custom data.
 
-## 安装
+## Installation
 ```bash
 pip install lamber
 ```
 
-### 依赖
+### Dependencies
 * python >= 3.10
 * pytest >= 8.3.5
 
-## 基于 Sqlite3 的测试报告
-测试报告是一种典型的媒介，可以更加直观的展示 Lamber 的功能。Lamber 支持将测试执行数据保存到 Sqlite3 数据库文件中，通过 `--lamber-sqlite-dir` 命令行选项指定数据库文件的**目录**，数据库文件名为 `lamber.db`。
+## Test report based on Sqlite3
+Lamber supports saving data to Sqlite3 database. Specify the db file(`lamber.db`) **directory** to be saved through `--lamber-sqlite-dir` commandline.
 
-> [lamber-report](https://github.com/luizyao/lamber-report) 是基于 Lamber 开发的测试报告，后续讨论将基于此展开。
+> [lamber-report](https://github.com/luizyao/lamber-report) is a test report tool developed based on this feature.
 >![lamber-report](docs/images/lamber-report.gif)
 
-## 对原生 pytest 脚本的支持
-一个典型的 pytest 脚本如下：
+## Support original pytest script
+A typical pytest script is as follows:
 
 ```python
 import pytest
@@ -44,19 +44,17 @@ def inc(x):
 def test_answer():
     assert inc(3) == 5
 ```
-* 包含 module 和 function 级别的 fixture。
+* It contains `module` and `function` fixtures.
 
-生成的测试报告主体如下：
+The generated test report is as follows：
 
 ![test_sample.png](docs/images/test_sample.png)
 
-* 包含 Step Tree、Traceback、Sourcecode、Logs 等信息。
-* 其中 pytest fixture 的调用关系会在 Step Tree 中展示。可以通过 `--lamber-ignore-fixture-step` 选项关闭此功能。
+* It contains the step tree, error traceback, script sourcecode and logs.
+* The calling relationship of the pytest fixtures will also be displayed in the Step Tree. This feature can be disabled by using the `--lamber-ignore-fixture-step` commandline.
 
-## 对原生 pytest 脚本的改造
-Lamber 引入 Step 的概念，将测试执行的过程进一步细分，支持**上下文管理器**（`with lamber.Step:`）和**装饰器**（`@lamber.step`）两种方式声明步骤。
-
-改造上述脚本：
+## Update the original pytest script
+Lamber introduces the Step concept, supports two usage methods: the **context manager**(`with lamber.step:`) and the **decorator**(`@lamber.step `).
 
 ```python
 import pytest
@@ -96,14 +94,12 @@ def test_answer():
     assert inc(3) == 5
 ```
 
-生成的测试报告主体如下：
+The generated test report is as follows:
 
 ![test_sample_with_step.png](docs/images/test_sample_with_step.png)
 
-* 在 Step Tree 上会有进一步细化。
-
-## 支持收集自定义环境信息
-Lamber 支持通过 `pytest_lamber_report_environment` 方法集成自定义的环境信息，例如：目标测试版本，备注信息等。
+## Support custom environment items
+Lamber supports integrating custom environment items(the target version, comments, etc.) through `pytest_lamber_report_environment` hook.
 
 ```python
 # conftest.py
@@ -116,9 +112,42 @@ def pytest_lamber_report_environment() -> dict:
 
 ```
 
-在测试报告中的体现如下：
+The generated test report is as follows:
 
 ![report_environment_items](docs/images/report_environment_items.png)
+
+## Support custom attachments
+
+### Image
+Take a screenshot automatically when the test case fails through [playwright](https://github.com/microsoft/playwright-pytest).
+
+```python
+# conftest.py
+
+import pytest
+from playwright.sync_api import Page
+
+from lamber import AttachmentType
+from lamber.models import TestCase
+
+
+@pytest.fixture(autouse=True)
+def auto_screenshot(page: Page, request: pytest.FixtureRequest):
+    yield
+
+    failed = hasattr(request.node, "rep_call") and request.node.rep_call.failed or True
+    if failed:
+        test_case: TestCase = request.node._lamber_test_case
+        test_case.attach(
+            "screenshot",
+            page.screenshot(full_page=True),
+            type=AttachmentType.PNG,
+        )
+```
+
+The generated test report is as follows:
+
+![](docs/images/auto_screenshot.gif)
 
 ## LICENSE
 [MIT LICENSE](./LICENSE.txt)
